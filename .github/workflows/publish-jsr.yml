@@ -1,0 +1,44 @@
+name: Publish to JSR
+
+on:
+  workflow_run:
+    workflows: ["Create Release and Publish"]
+    types:
+      - completed
+
+jobs:
+  publish-jsr:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install Dependencies
+        run: cd packages/storyshot && pnpm install
+
+      - name: Build Project
+        run: cd packages/storyshot && pnpm run build
+
+      - name: Install JSR CLI
+        run: npm install -g @jspm/cli
+
+      - name: Configure JSR
+        run: |
+          echo "//registry.jsr.io/:_authToken=${{ secrets.JSR_TOKEN }}" >> ~/.npmrc
+
+      - name: Publish to JSR
+        run: cd packages/storyshot && pnpm run publish:jsr
+        env:
+          JSR_TOKEN: ${{ secrets.JSR_TOKEN }}

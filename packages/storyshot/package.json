@@ -12,7 +12,8 @@
     "dev": "vite-node ./src/cli.ts",
     "test": "vite-node ./src/cli.ts \"http://localhost:6006\"",
     "build": "tsup",
-    "clean": "rm -rf lib && rm -rf __screenshots__"
+    "clean": "rm -rf lib && rm -rf __screenshots__",
+    "publish:jsr": "npx jsr publish"
   },
   "author": "geonhyeoklee",
   "keywords": [
@@ -37,5 +38,12 @@
     "tsup": "^8.4.0",
     "typescript": "^5.7.3",
     "vite-node": "^3.0.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "jsr": {
+      "name": "@rock24/storyshot",
+      "type": "module"
+    }
   }
 }
